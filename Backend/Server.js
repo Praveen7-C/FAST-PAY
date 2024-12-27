@@ -1,22 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser"); 
 const crypto = require("crypto");
 
 const app = express();
-
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// MongoDB Connection
 mongoose
-  .connect(
-    "mongodb+srv://ve1d:puiQNMy3fUkvJra7@test-db.dxurd.mongodb.net/test-db?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect("mongodb://localhost:27017/user", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
 
@@ -26,7 +23,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   upi_id: { type: String, unique: true },
-  balance: { type: Number, default: 1000 },
+  balance: { type: Number },
 });
 
 // Create User Model
@@ -44,10 +41,8 @@ const transactionSchema = new mongoose.Schema({
 const Transaction = mongoose.model("Transaction", transactionSchema);
 
 // Function to generate a unique UPI ID
-const generateUPI = () => {
-  const randomId = crypto.randomBytes(4).toString("hex"); // Generates a random 8-character ID
-  return `${randomId}@fastpay`;
-};
+const generateUPI = () => {    const randomId = crypto.randomBytes(4).toString("hex"); // Generates a random 8-character ID
+  return `${randomId}@fastpay`;};
 
 // Signup Route
 app.post("/api/signup", async (req, res) => {
@@ -62,11 +57,11 @@ app.post("/api/signup", async (req, res) => {
 
     // Generate UPI ID
     const upi_id = generateUPI();
+    const balance = 1000;
 
     // Create new user
-    user = new User({ name, email, password, upi_id });
+    user = new User({ name, email, password, upi_id, balance });
     await user.save();
-
     res.status(201).send({ message: "User registered successfully!", upi_id });
   } catch (error) {
     console.error(error);
@@ -78,12 +73,10 @@ app.post("/api/signup", async (req, res) => {
 app.get("/api/user/:upi_id", async (req, res) => {
   try {
     const { upi_id } = req.params;
-
     const user = await User.findOne({ upi_id });
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }
-
     res.status(200).send(user);
   } catch (error) {
     console.error("Error fetching user:", error);
@@ -103,7 +96,7 @@ app.post("/api/login", async (req, res) => {
     }
 
     res.status(200).send({
-      message: "Login successful",
+      message: "Login successful!",
       upi_id: user.upi_id,
       balance: user.balance,
     });
@@ -132,8 +125,7 @@ app.post("/api/transaction", async (req, res) => {
     }
 
     if (!receiver) {
-      return res.status(404).send({ message: "Receiver not found" });
-    }
+      return res.status(404).send({ message: "Receiver not found" });     }
 
     // Check if sender has enough balance
     if (sender.balance < amount) {
@@ -144,15 +136,27 @@ app.post("/api/transaction", async (req, res) => {
     sender.balance -= amount;
     receiver.balance += amount;
 
+    // Log before saving
+    console.log("Updating sender balance:", sender);
+    console.log("Updating receiver balance:", receiver);
+
     // Save updated users
     await sender.save();
     await receiver.save();
 
+    // Log after saving
+    console.log("Sender balance after save:", sender);
+    console.log("Receiver balance after save:", receiver);
+
     // Save transaction record
-    const transaction = new Transaction({ sender_upi_id, receiver_upi_id, amount });
+    const transaction = new Transaction({
+      sender_upi_id,
+      receiver_upi_id,
+      amount,
+    });
     await transaction.save();
 
-    res.status(200).send({ message: "Transaction successful" });
+    res.status(200).send({ message: "Transaction successful!" });
   } catch (error) {
     console.error("Transaction error:", error);
     res.status(500).send({ message: "Server error" });
@@ -168,7 +172,6 @@ app.get("/api/transactions/:upi_id", async (req, res) => {
     const transactions = await Transaction.find({
       $or: [{ sender_upi_id: upi_id }, { receiver_upi_id: upi_id }],
     }).sort({ timestamp: -1 });
-
     res.status(200).send(transactions);
   } catch (error) {
     console.error(error);
@@ -176,5 +179,5 @@ app.get("/api/transactions/:upi_id", async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const PORT = process.env.PORT || 4003;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); 
