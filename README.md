@@ -34,6 +34,7 @@ cd FAST-PAY
 ### 2. Install Required Packages
 
 Ensure Node.js, npm, MongoDB, and Git are installed. Using VS Code editor, navigate to your project directory and open the terminal, then install the necessary dependencies:
+
 In the frontend directory:
 ```bash
 npm install react react-router-dom react-bootstrap axios bootstrap recharts web-vitals
@@ -54,6 +55,7 @@ npm install express mongoose cors body-parser crypto
 
 Start MongoDB:
 Ensure MongoDB is running locally.
+
 Backend:
 ```bash
 cd backend
@@ -72,12 +74,19 @@ This will run the React app, which should be accessible at `http://localhost:300
 ## API Endpoints
 
 ### 1. User Authentication
+
 POST /api/signup: Register a new user.
+
 POST /api/login: Authenticate a user.
+
 ### 2. User Management
+
 GET /api/user/:upi_id: Fetch user details by UPI ID.
+
 ### 3. Transactions
+
 POST /api/transaction: Perform a transaction between users.
+
 GET /api/transactions/:upi_id: Fetch all transactions for a user.
 
 ---
@@ -93,6 +102,7 @@ GET /api/transactions/:upi_id: Fetch all transactions for a user.
 ---
 
 ## Directory Structure
+
 ```plaintext
 FAST-PAY/
 ├── frontend/                 # React frontend
