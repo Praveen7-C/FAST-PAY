@@ -57,18 +57,22 @@ Start MongoDB:
 Ensure MongoDB is running locally.
 
 Backend:
+
+This command runs the server.js file in Node.js, which starts the Express server. Once the server is running, it will listen for incoming HTTP requests (like user Sign-ups, Logins, Transactions, etc.) on a specified port.
+
 ```bash
 cd backend
 node server.js
 ```
 
 Frontend:
+
+This command run the React app, which should be accessible at `http://localhost:3000`.
+
 ```bash
 cd frontend
 npm start
 ```
-This will run the React app, which should be accessible at `http://localhost:3000`.
-
 ---
 
 ## API Endpoints
