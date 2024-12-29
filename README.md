@@ -53,8 +53,7 @@ npm install express mongoose cors body-parser crypto
 
 ### 4. Run the Application
 
-Start MongoDB:
-Ensure MongoDB is running locally.
+Launch MongoDB on your computer. If you're running MongoDB locally, it typically uses `mongodb://localhost:27017` as the default connection string.
 
 Backend:
 
