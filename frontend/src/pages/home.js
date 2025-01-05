@@ -19,7 +19,7 @@ const Home = () => {
           </Col>
           <Col md={6}>
             <Image
-              src="https://via.placeholder.com/500x300"
+              src="https://raw.githubusercontent.com/Praveen7-C/Images/main/Fastpay%20logo.png" 
               alt="Online payment illustration"
               fluid
             />
